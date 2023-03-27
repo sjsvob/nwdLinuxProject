@@ -4,7 +4,7 @@
 dir="/"
 
 # Define the output file
-outfile="$HOME/myfile.txt"
+outputfile="$HOME/myfile.txt"
 
 # Run the find command to list directories two levels deep and output the results to the file
 #find $dir -mindepth 2 -maxdepth 2 -type d > "$outfile"
@@ -12,8 +12,8 @@ outfile="$HOME/myfile.txt"
 # Loop through the directories two levels deep and output the results to the file
 for d in "$dir"/*/*/; do
     if [ -d "$d" ]; then
-        echo "$d" >> "$outfile"
+        echo "$d" >> "$outputfile"
     fi
 done
 
-echo "output written to file: " "$outfile"
+echo "output written to file: " "$outputfile"

@@ -1,0 +1,50 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>CACI: New Web Dev Tutorial, API, ArcGIS Maps SDK for JavaScript</title>
+  <style>
+    html, body, #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.26/esri/themes/light/main.css">
+  <script src="https://js.arcgis.com/4.26/"></script>
+
+  <script>
+    require([
+      "esri/config",
+      "esri/Map",
+      "esri/views/SceneView"
+  ], function(esriConfig, Map, SceneView) {
+      esriConfig.apiKey = "AAPKb4da8dc96512424cab63adaf1dff1bb2bEVkZ_E0bw4f4CB5LjvRIzKaUxK5atdIXcsbp_4qJRWOTwNmqRxW07Ir_D58NFQt";
+      const map = new Map({
+      basemap: "arcgis-topographic", //Basemap layer service
+      ground: "world-elevation", //Elevation service
+    });
+      const view = new SceneView({
+      container: "viewDiv",
+      map: map,
+      camera: {
+        position: {
+          x: -77.4291, //Longitude
+          y: 39.0067, //Latitude
+          z: 2000 //Meters
+        },
+        tilt: 55
+      }
+      });
+
+
+    });
+  </script>
+  
+  
+</head>
+<body>
+  <div id="viewDiv"></div>
+</body>
+</html>
