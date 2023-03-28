@@ -120,21 +120,21 @@
       const myPrefixQuestion = "What is the latitude and longitude of, ";
       const mySuffixQuestion = ", in the following format ##.####° N/S, ##.####° E/W"
       const myQuestion = myPrefixQuestion + myTarget + mySuffixQuestion;
-      myQuestionDiv.textContent = myQuestion;
+      myQuestionDiv.textContent = "ChatGPT Query: " + myQuestion;
 
       const myResultDiv = document.getElementById("myresult");
     
       queryChatGPT(myQuestion).then(response => {
-        myResultDiv.textContent =  response;
+        myResultDiv.textContent =  "ChatGPT Response: " + response;
         const [latitude, longitude] = extractLatLong(response);
         if (latitude !== null && longitude !== null) {
           displayLocation(latitude,longitude);
         } else {
-          myResultDiv.textContent =  "A latitude & longitude were not found.";
+          myResultDiv.textContent =  "ERROR: A latitude & longitude were not found.";
         }
         
       }).catch(error => {
-        myResultDiv.textContent =  "ChatGPT was unable to process your request. "+ error;
+        myResultDiv.textContent =  "ERROR: ChatGPT was unable to process your request. "+ error;
       });
     }
 
