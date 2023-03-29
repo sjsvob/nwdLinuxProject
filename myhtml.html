@@ -104,10 +104,10 @@
 
       var myPrefixQuestion = "";
       if (option1.checked) {
-        // Option 1 was selected: single location
+        // Option 1: Location(s) selected
         myPrefixQuestion = "in JSON format return a list of Name, Latitude and Longitude of, ";
       } else if (option2.checked) {
-        // None of the options were selected
+        // Option 2: area selected
         myPrefixQuestion = "In JSON format provide a list of Name, Latitude and Longitude vertices to describe the area contained by, ";
       }
 
@@ -116,22 +116,27 @@
       myQuestionDiv.textContent = "ChatGPT Query: " + myQuestion;
 
       const myResultDiv = document.getElementById("myresult");
+      myResultDiv.textContent =  "ChatGPT Response: waiting";
+
+      const myErrorDiv = document.getElementById("myError");
+      myErrorDiv.textContent =  "";
     
       queryChatGPT(myQuestion).then(response => {
         myResultDiv.textContent =  "ChatGPT Response: " + response;
 
         if (option1.checked) {
-          // Option 1: Location(s) was selected
+          // Option 1: Location(s) selected
           const data = JSON.parse(response);
           displayLocation(data.Coordinates,1);
         } else if (option2.checked) {
-          // Option 2: area was selected
+          // Option 2: area selected
           const data = JSON.parse(response);
           displayLocation(data.Coordinates,2);
         }
         
       }).catch(error => {
-        myError.textContent =  "ERROR: "+ error;
+        const myErrorDiv = document.getElementById("myError");
+        myErrorDiv.textContent =  "ERROR: "+ error;
       });
     }
 
@@ -242,6 +247,7 @@
     Special thanks to CACI for allowing me to develop it during my New Web Dev Training.<br>
     Text is processed using the natural language processor ChatGPT. <br>
     Geospatial data is provided via ArcGis.<br>
+    Please note that this is experimental and ChatGPT can return inconsistent, incorrect or ill formed responses.<br>
     <br>
     Enter a textual description of the location you wish to target.<br>
     </P>
