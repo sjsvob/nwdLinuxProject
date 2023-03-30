@@ -96,7 +96,7 @@
         },
         body: JSON.stringify({
           prompt: prompt,
-          max_tokens: 2000, // maximum number of tokens to generate in the response
+          max_tokens: 4000, // maximum number of tokens to generate in the response
           temperature: 0.7 // controls the creativity of the generated text, higher values lead to more creative but less accurate responses
         })
       });
@@ -119,13 +119,13 @@
       var myPrefixQuestion = "";
       if (option1.checked) {
         // Option 1: Location(s) selected
-        myPrefixQuestion = "in JSON format return a list of Name, Latitude and Longitude of, ";
+        myPrefixQuestion = "in JSON format return a list of Name, Description (which is only a wikipedia link), Latitude and Longitude of, ";
       } else if (option2.checked) {
         // Option 2: area selected
         myPrefixQuestion = "In JSON format provide a list of Name, Latitude and Longitude vertices to describe the area contained by, ";
       }
 
-      const mySuffixQuestion = ", with the coordinates described as ##.####, ##.####, the list should be called Coordinates."
+      const mySuffixQuestion = ", with the coordinates described as ##.####, ##.####, the list should be called Coordinates. Do not exceed 4000 characters."
       const myQuestion = myPrefixQuestion + myTarget + mySuffixQuestion;
       myQuestionDiv.textContent = "ChatGPT Query: " + myQuestion;
 
@@ -205,9 +205,20 @@
             latitude: coordinates[i].Latitude, //Latitude
           };
 
+          const popupTemplate = {
+              title: coordinates[i].Name,
+              content: coordinates[i].Description
+          }
+          const attributes = {
+              Name: coordinates[i].Name,
+              Description: coordinates[i].Description
+          }
+          
           const pointGraphic = new Graphic({
               geometry: point,
-              symbol: simpleMarkerSymbol
+              symbol: simpleMarkerSymbol,
+              attributes: attributes,
+              popupTemplate: popupTemplate
             });
 
           graphicsLayer.add(pointGraphic);
