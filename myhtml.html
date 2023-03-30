@@ -119,7 +119,7 @@
       var myPrefixQuestion = "";
       if (option1.checked) {
         // Option 1: Location(s) selected
-        myPrefixQuestion = "in JSON format return a list of Name, Description (which is only a wikipedia link), Latitude and Longitude of, ";
+        myPrefixQuestion = "in JSON format return a list of Name, Description (which is only a wikipedia html hyperlink), Latitude and Longitude of, ";
       } else if (option2.checked) {
         // Option 2: area selected
         myPrefixQuestion = "In JSON format provide a list of Name, Latitude and Longitude vertices to describe the area contained by, ";
@@ -189,6 +189,7 @@
       const graphicsLayer = new GraphicsLayer();
       map.add(graphicsLayer);
 
+      //Display Location(s)
       if (userselection==1) {
         const simpleMarkerSymbol = {
           type: "simple-marker",
@@ -209,6 +210,7 @@
               title: coordinates[i].Name,
               content: coordinates[i].Description
           }
+          
           const attributes = {
               Name: coordinates[i].Name,
               Description: coordinates[i].Description
@@ -226,6 +228,7 @@
 
       }
 
+      //Display an Area
       if (userselection==2) {
         const polygon = {
             type: "polygon",
