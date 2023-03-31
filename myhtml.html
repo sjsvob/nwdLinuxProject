@@ -71,9 +71,9 @@
 
     //----------------------------------------------
     //You may set your personalized ChatGPT Key here
-    const gptkey = "ENTER KEY";
+    const gptkey = "Your OpenAI Key";
     //You may set your personalized ArcGIS Key here
-    const arcgiskey = "ENTER KEY";
+    const arcgiskey = "Your ArcGIS Key";
     //----------------------------------------------
 
     window.onload = function() {
@@ -90,19 +90,19 @@
         return true;
     }
 
-    function suppress() {
+    function displayResults(force) {
       var decider = document.getElementById('suppressresults');
       const myQuestion = document.getElementById('myQuestion');
       const myresult = document.getElementById('myresult');
       const myError = document.getElementById('myError');
-      if(decider.checked){
-        myQuestion.style.display = 'none';
-        myresult.style.display = 'none';
-        myError.style.display = 'none';
-      } else {
+      if(!decider.checked||force){
         myQuestion.style.display = 'block';
         myresult.style.display = 'block';
         myError.style.display = 'block';
+      } else {
+        myQuestion.style.display = 'none';
+        myresult.style.display = 'none';
+        myError.style.display = 'none';
       }
       return true;
     } 
@@ -126,6 +126,7 @@
     }
 
     function targetLocation() {
+      displayResults(true);
 
       const myIntroDiv = document.getElementById('myIntro');
       myIntroDiv.style.display = 'none';
@@ -277,6 +278,7 @@
         graphicsLayer.add(polygonGraphic);
       }
 
+      displayResults(false);
 
       });
     };
@@ -324,7 +326,7 @@
           <input type="radio" name="option" value="Area" id="option2" >
             Area
         </label>
-        <input type="checkbox" id="suppressresults" onclick="suppress()">
+        <input type="checkbox" id="suppressresults" onclick="displayResults(false)">
         <label for="suppressresults"> Suppress Raw Results</label>
       </div>
     </form> 
