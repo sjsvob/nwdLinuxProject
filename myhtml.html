@@ -50,7 +50,6 @@
       color: #ffffff;
     }
 
-
     @media (max-width: 767px) {
     .container {
       padding: 20px;
@@ -58,12 +57,11 @@
   }
 
   </style>
-  <meta charset="utf-8">
+
+<meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>CACI: New Web Dev Tutorial API</title>
-  <style>
 
-  </style>
   <link rel="stylesheet" href="https://js.arcgis.com/4.26/esri/themes/light/main.css">
   <script src="https://js.arcgis.com/4.26/"></script>
 
@@ -72,8 +70,10 @@
     //----------------------------------------------
     //You may set your personalized ChatGPT Key here
     const gptkey = "Your OpenAI Key";
+    
     //You may set your personalized ArcGIS Key here
     const arcgiskey = "Your ArcGIS Key";
+    
     //----------------------------------------------
 
     window.onload = function() {
@@ -163,11 +163,11 @@
         if (option1.checked) {
           // Option 1: Location(s) selected
           const data = JSON.parse(response);
-          displayLocation(data.Coordinates,1);
+          displayLocation(data.Coordinates,1); //plot locations on ArcGIS map
         } else if (option2.checked) {
           // Option 2: area selected
           const data = JSON.parse(response);
-          displayLocation(data.Coordinates,2);
+          displayLocation(data.Coordinates,2); //plot an array on ArcGIS map
         }
         
       }).catch(error => {
@@ -180,6 +180,16 @@
     function displayLocation(coordinates,userselection) {
       const myarcgiskey = document.getElementById("arcgiskey").value;
 
+      var maptype = "arcgis-topographic";
+
+      if (map1.checked) {
+          // Map 1: Road Map for Navigtation
+          maptype = "arcgis-navigation";
+        } else if (map2.checked) {
+          // Map 2: Topographcial Map
+          maptype = "arcgis-topographic";
+        }
+
       require([
       "esri/config",
       "esri/Map",
@@ -191,7 +201,7 @@
       ], function(esriConfig, Map, SceneView, Graphic, GraphicsLayer, MarkerSymbol, Point) {
           esriConfig.apiKey = myarcgiskey;
           const map = new Map({
-          basemap: "arcgis-topographic", //Basemap layer service
+          basemap: maptype, //Basemap layer service
           ground: "world-elevation", //Elevation service
         });
       
@@ -315,10 +325,8 @@
         <input type="text" id="arcgiskey" name="arcgiskey"> 
       </div>
       <div class="my-div">
-        <label for="target">Target:</label>
-        <input type="text" id="target" name="target" onkeypress="return entsub(this.form)" size="40"> 
-        <button type="button" onclick="targetLocation()">SUBMIT</button> 
-        <label>
+        <label for="target">Type of Results: </label>
+         <label>
           <input type="radio" name="option" value="Locations" id="option1" checked>
             Location(s)
         </label>
@@ -326,6 +334,22 @@
           <input type="radio" name="option" value="Area" id="option2" >
             Area
         </label>
+      </div>
+      <div class="my-div">
+        <label for="map">Map Type: </label>
+         <label>
+          <input type="radio" name="map" value="Navigation" id="map1" checked>
+            Navigation
+        </label>
+        <label>
+          <input type="radio" name="map" value="Area" id="map2" >
+            Topographic
+        </label>
+      </div>
+      <div class="my-div">
+        <label for="target">Target:</label>
+        <input type="text" id="target" name="target" onkeypress="return entsub(this.form)" size="40"> 
+        <button type="button" onclick="targetLocation()">SUBMIT</button> 
         <input type="checkbox" id="suppressresults" onclick="displayResults(false)">
         <label for="suppressresults"> Suppress Raw Results</label>
       </div>
