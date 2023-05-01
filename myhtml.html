@@ -50,6 +50,21 @@
       color: #ffffff;
     }
 
+    button {
+      background-color: #0077FF;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 12px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .button:hover {
+      background-color: #0066CC;
+    }
+
     @media (max-width: 767px) {
     .container {
       padding: 20px;
@@ -68,12 +83,13 @@
   <script>
 
     //----------------------------------------------
+    
     //You may set your personalized ChatGPT Key here
-    const gptkey = "Your OpenAI Key";
+    const gptkey = ""; 
     
     //You may set your personalized ArcGIS Key here
-    const arcgiskey = "Your ArcGIS Key";
-    
+    const arcgiskey = ""; 
+     
     //----------------------------------------------
 
     window.onload = function() {
@@ -305,7 +321,7 @@
   </div>
   <div id="myIntro" class="my-div">
     <P>
-    Welcome to Stephen J Svoboda's artificial intelligence (AI) enabled geospatial target locator.<br>
+    Welcome to Stephen J Svoboda's artificial intelligence (AI) enabled geospatial target locater.<br>
     Special thanks to CACI for allowing me to develop it during my New Web Dev Training.<br>
     Text is processed using the natural language processor  <a href="https://openai.com/blog/chatgpt">ChatGPT</a>. <br>
     Geospatial data is provided via <a href="https://www.arcgis.com/index.html">ArcGIS</a>.<br>
@@ -317,12 +333,14 @@
 
   <div id="myFormDiv" class="my-div">
     <form id="myForm">
+      <fieldset>
+      <legend>Target Locater</legend>
       <div class="my-div">
         <label for="gptkey">ChatGPT Key:</label>
-        <input type="text" id="gptkey" name="gptkey"> 
+        <input type="text" id="gptkey" name="gptkey" placeholder="Your OpenAI Key"> 
         &nbsp;&nbsp;
         <label for="arcgiskey">ArcGIS Key:</label>
-        <input type="text" id="arcgiskey" name="arcgiskey"> 
+        <input type="text" id="arcgiskey" name="arcgiskey" placeholder="Your ArcGIS Key"> 
       </div>
       <div class="my-div">
         <label for="target">Type of Results: </label>
@@ -353,6 +371,7 @@
         <input type="checkbox" id="suppressresults" onclick="displayResults(false)">
         <label for="suppressresults"> Suppress Raw Results</label>
       </div>
+    </fieldset>
     </form> 
   </div>
 
