@@ -354,25 +354,33 @@
     Text is processed using the natural language processor  <a href="https://openai.com/blog/chatgpt">ChatGPT</a>. <br>
     Geospatial data is provided via <a href="https://www.arcgis.com/index.html">ArcGIS</a>.<br>
     Note that ChatGPT will often return inconsistent, incorrect or ill formed responses.<br>
-    <br>
-    Enter a textual description of the location you wish to target.<br>
     </P>
   </div>
 
   <div id="myFormDiv" class="my-div">
     <form id="myForm">
       <fieldset>
-      <legend>Target Locater</legend>
+      <legend>GEOSPATIAL TARGET LOCATOR</legend>
       <div class="my-div">
         <div class="tooltip">
           <label for="gptkey">ChatGPT Key:</label>
-          <span class="tooltiptext">You must provide a valid ChatGPT API key obtained from OpenAI.</span>
+          <span class="tooltiptext">
+            <fieldset>
+              <legend>ChatGPT Key</legend>
+              You must provide a valid ChatGPT API key obtained from OpenAI.
+            </fieldset>
+          </span>
         </div>
         <input type="text" id="gptkey" name="gptkey" placeholder="Your OpenAI Key"> 
         &nbsp;&nbsp;
         <div class="tooltip">
           <label for="arcgiskey">ArcGIS Key:</label>
-          <span class="tooltiptext">You must provide a valid API key obtained from ArcGIS.</span>
+          <span class="tooltiptext">
+            <fieldset>
+              <legend>ArcGIS Key</legend>
+              You must provide a valid API key obtained from ArcGIS.
+            </fieldset>
+          </span>
         </div>
         <input type="text" id="arcgiskey" name="arcgiskey" placeholder="Your ArcGIS Key"> 
       </div>
@@ -380,16 +388,26 @@
         <label for="target">Type of Results: </label>
          <label>
           <input type="radio" name="option" value="Locations" id="option1" checked>
-            <div class="tooltip">
-              Location(s)
-              <span class="tooltiptext">Display the result as pinpointed locations on the map.</span>
-             </div>
+          <div class="tooltip">
+            Location(s)
+            <span class="tooltiptext"><span>
+              <fieldset>
+                <legend>Location(s)</legend>
+                Display the result as pinpointed locations on the map.
+              </fieldset>
+            </span>
+          </div>
         </label>
         <label>
           <input type="radio" name="option" value="Area" id="option2" >
             <div class="tooltip">
               Area
-              <span class="tooltiptext">Display the result as a shaded area on the map.</span>
+              <span class="tooltiptext">
+                <fieldset>
+                  <legend>Area</legend>
+                  Display the result as a shaded area on the map.
+                </fieldset>
+              </span>
              </div>
         </label>
       </div>
@@ -399,34 +417,56 @@
           <input type="radio" name="map" value="Navigation" id="map1" checked>
             <div class="tooltip">
               Navigation
-              <span class="tooltiptext">Display results on a Navigational map.</span>
+              <span class="tooltiptext">
+                <fieldset>
+                  <legend>Navigation</legend>
+                  Display results on a Navigational map.
+                </fieldset>
+              </span>
              </div>
         </label>
         <label>
           <input type="radio" name="map" value="Area" id="map2" >
           <div class="tooltip">
             Topographic
-            <span class="tooltiptext">Display results on a Topological map.</span>
+            <span class="tooltiptext">
+              <fieldset>
+                <legend>Topographic</legend>
+                Display results on a Topological map.
+              </fieldset>
+            </span>
            </div>
         </label>
       </div>
       <div class="my-div">
         <div class="tooltip">
           <label for="target">Target:</label>
-          <span class="tooltiptext">Enter a textual description of your geospatial target.</span>
+          <span class="tooltiptext">
+            <fieldset>
+              <legend>Target</legend>
+              Enter a textual description of your geospatial target.
+            </fieldset>
+          </span>
         </div>
-        <input type="text" id="target" name="target" onkeypress="return entsub(this.form)" size="60"> 
+        <input type="text" id="target" name="target" onkeypress="return entsub(this.form)" size="60"
+            placeholder="Enter a textual description of the target(s) you would like to locate."> 
         <button type="button" onclick="targetLocation()">SUBMIT</button> 
         <input type="checkbox" id="suppressresults" onclick="displayResults(false)">
         <label for="suppressresults">
           <div class="tooltip">
             Suppress Raw Results
-            <span class="tooltiptext">Selecting this will hide the query which is sent to ChatGPT as well as the raw results returned.</span>
+            <span class="tooltiptext">
+              <fieldset>
+                <legend>Suppress Raw Results</legend>
+                Selecting this will hide the query which is sent to ChatGPT as well as the raw results returned.
+              </fieldset>
+            </span>
            </div>
         </label>
       </div>
     </fieldset>
     </form> 
+    
   </div>
 
 
