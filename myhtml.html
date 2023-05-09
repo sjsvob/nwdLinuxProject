@@ -1,0 +1,481 @@
+<html>
+<head>
+  <style>
+    html, body, #viewDiv {
+      background-color: #020202;
+      color: #ffffff;
+
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    h1 {
+      font-size: 24px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px;
+    }
+
+    section {
+      margin-bottom: 40px;
+    }
+
+    input {
+      margin-left: 20px;
+      margin-right: 5px;
+      margin-bottom: 10px;
+      margin-top: 10px;
+    }
+
+    .my-div {
+      margin-left: 20px;
+      margin-right: 20px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-family: verdana;
+      font-size: 20px;
+      margin-left: 20px;
+      margin-bottom: 10px;
+    }
+
+    a {
+      color: #ffffff;
+    }
+
+    button {
+      background-color: #0077FF;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 12px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .button:hover {
+      background-color: #0066CC;
+    }
+
+    @media (max-width: 767px) {
+    .container {
+      padding: 20px;
+    }
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      opacity: 0;
+      position: absolute;
+      background-color: #333;
+      color: #fff;
+      padding: 5px;
+      z-index: 1;
+      bottom: 100%;
+      left: 50%;
+      margin-left: -60px;
+      transition: opacity 0.3s;
+      width: 500px;
+      border: 2px solid #0077FF;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+
+  </style>
+
+<meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>CACI: New Web Dev Tutorial API</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.26/esri/themes/light/main.css">
+  <script src="https://js.arcgis.com/4.26/"></script>
+
+  <script>
+
+    //----------------------------------------------
+    
+    //You may set your personalized ChatGPT Key here
+    const gptkey = ""; 
+    
+    //You may set your personalized ArcGIS Key here
+    const arcgiskey = ""; 
+     
+    //----------------------------------------------
+
+    window.onload = function() {
+      document.getElementById("gptkey").value = gptkey;
+      document.getElementById("arcgiskey").value = arcgiskey;
+    }
+
+    function entsub(myform) {
+      if (window.event && window.event.keyCode == 13) {
+        targetLocation();
+        return false;
+      }
+      else
+        return true;
+    }
+
+    function displayResults(force) {
+      var decider = document.getElementById('suppressresults');
+      const myQuestion = document.getElementById('myQuestion');
+      const myresult = document.getElementById('myresult');
+      const myError = document.getElementById('myError');
+      if(!decider.checked||force){
+        myQuestion.style.display = 'block';
+        myresult.style.display = 'block';
+        myError.style.display = 'block';
+      } else {
+        myQuestion.style.display = 'none';
+        myresult.style.display = 'none';
+        myError.style.display = 'none';
+      }
+      return true;
+    } 
+
+    async function queryChatGPT(prompt) {
+      const mygptkey = "Bearer " + document.getElementById("gptkey").value;
+      const response = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': mygptkey
+        },
+        body: JSON.stringify({
+          prompt: prompt,
+          max_tokens: 4000, // maximum number of tokens to generate in the response
+          temperature: 0.7 // controls the creativity of the generated text, higher values lead to more creative but less accurate responses
+        })
+      });
+      const data = await response.json();
+      return "{"+data.choices[0].text.trim()+"}";
+    }
+
+    function targetLocation() {
+      displayResults(true);
+
+      const myIntroDiv = document.getElementById('myIntro');
+      myIntroDiv.style.display = 'none';
+
+      const myQuestionDiv = document.getElementById("myQuestion");
+      const myTarget = document.getElementById("target").value;
+ 
+      const option1 = document.getElementById('option1');
+      const option2 = document.getElementById('option2');
+      const option3 = document.getElementById('option3');
+
+      var myPrefixQuestion = "";
+      if (option1.checked) {
+        // Option 1: Location(s) selected
+        myPrefixQuestion = "in JSON format return a list of Name, Description (which is a relevant html hyperlink), Latitude and Longitude of, ";
+      } else if (option2.checked) {
+        // Option 2: area selected
+        myPrefixQuestion = "In JSON format provide a list of Name, Latitude and Longitude vertices to describe the area contained by, ";
+      }
+
+      const mySuffixQuestion = ", with the coordinates described as ##.####, ##.####, the list should be called Coordinates. Do not exceed 4000 characters."
+      const myQuestion = myPrefixQuestion + myTarget + mySuffixQuestion;
+      myQuestionDiv.textContent = "ChatGPT Query: " + myQuestion;
+
+      const myResultDiv = document.getElementById("myresult");
+      myResultDiv.textContent =  "ChatGPT Response: waiting";
+
+      const myErrorDiv = document.getElementById("myError");
+      myErrorDiv.textContent =  "";
+    
+      queryChatGPT(myQuestion).then(response => {
+        myResultDiv.textContent =  "ChatGPT Response: " + response;
+
+        if (option1.checked) {
+          // Option 1: Location(s) selected
+          const data = JSON.parse(response);
+          displayLocation(data.Coordinates,1); //plot locations on ArcGIS map
+        } else if (option2.checked) {
+          // Option 2: area selected
+          const data = JSON.parse(response);
+          displayLocation(data.Coordinates,2); //plot an array on ArcGIS map
+        }
+        
+      }).catch(error => {
+        const myErrorDiv = document.getElementById("myError");
+        myErrorDiv.textContent =  "ERROR: "+ error;
+      });
+    }
+
+
+    function displayLocation(coordinates,userselection) {
+      const myarcgiskey = document.getElementById("arcgiskey").value;
+
+      var maptype = "arcgis-topographic";
+
+      if (map1.checked) {
+          // Map 1: Road Map for Navigtation
+          maptype = "arcgis-navigation";
+        } else if (map2.checked) {
+          // Map 2: Topographcial Map
+          maptype = "arcgis-topographic";
+        }
+
+      require([
+      "esri/config",
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/Graphic",
+      "esri/layers/GraphicsLayer",
+      "esri/symbols/MarkerSymbol",
+      "esri/geometry/Point"
+      ], function(esriConfig, Map, SceneView, Graphic, GraphicsLayer, MarkerSymbol, Point) {
+          esriConfig.apiKey = myarcgiskey;
+          const map = new Map({
+          basemap: maptype, //Basemap layer service
+          ground: "world-elevation", //Elevation service
+        });
+      
+      const view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        camera: {
+          position: {
+            x: coordinates[0].Longitude, //Longitude
+            y: coordinates[0].Latitude-.03, //Latitude
+            z: 2000 //Meters
+          },
+          tilt: 55
+        }
+        });
+
+      const graphicsLayer = new GraphicsLayer();
+      map.add(graphicsLayer);
+
+      //Display Location(s)
+      if (userselection==1) {
+        const simpleMarkerSymbol = {
+          type: "simple-marker",
+          color: [226, 119, 40],  // Orange
+          outline: {
+              color: [255, 255, 255], // White
+              width: 1
+        }};
+        
+        for (var i = 0; i < coordinates.length; i++) {
+          const point = {
+            type: "point",
+            longitude: coordinates[i].Longitude, //Longitude
+            latitude: coordinates[i].Latitude, //Latitude
+          };
+
+          const popupTemplate = {
+              title: coordinates[i].Name,
+              content: coordinates[i].Description
+          }
+          
+          const attributes = {
+              Name: coordinates[i].Name,
+              Description: coordinates[i].Description
+          }
+          
+          const pointGraphic = new Graphic({
+              geometry: point,
+              symbol: simpleMarkerSymbol,
+              attributes: attributes,
+              popupTemplate: popupTemplate
+            });
+
+          graphicsLayer.add(pointGraphic);
+        }
+
+      }
+
+      //Display an Area
+      if (userselection==2) {
+        const polygon = {
+            type: "polygon",
+            rings: []
+        };
+
+        for (var i = 0; i < coordinates.length; i++) {
+          polygon.rings.push([coordinates[i].Longitude,coordinates[i].Latitude]);
+        }
+
+        const simpleFillSymbol = {
+            type: "simple-fill",
+            color: [227, 139, 79, 0.8],  // Orange, opacity 80%
+            outline: {
+                color: [255, 255, 255],
+                width: 1
+            }
+        };
+
+        const polygonGraphic = new Graphic({
+            geometry: polygon,
+            symbol: simpleFillSymbol,
+
+        });
+        graphicsLayer.add(polygonGraphic);
+      }
+
+      displayResults(false);
+
+      });
+    };
+
+  </script>
+  
+  
+</head>
+<body>
+  
+
+  <div class="my-div"> 
+    <h1>Stephen J Svoboda - New Web Dev Training - API Exercise</h1>
+  </div>
+  <div id="myIntro" class="my-div">
+    <P>
+    Welcome to Stephen J Svoboda's artificial intelligence (AI) enabled geospatial target locater.<br>
+    Special thanks to CACI for allowing me to develop it during my New Web Dev Training.<br>
+    Text is processed using the natural language processor  <a href="https://openai.com/blog/chatgpt">ChatGPT</a>. <br>
+    Geospatial data is provided via <a href="https://www.arcgis.com/index.html">ArcGIS</a>.<br>
+    Note that ChatGPT will often return inconsistent, incorrect or ill formed responses.<br>
+    </P>
+  </div>
+
+  <div id="myFormDiv" class="my-div">
+    <form id="myForm">
+      <fieldset>
+      <legend>GEOSPATIAL TARGET LOCATOR</legend>
+      <div class="my-div">
+        <div class="tooltip">
+          <label for="gptkey">ChatGPT Key:</label>
+          <span class="tooltiptext">
+            <fieldset>
+              <legend>ChatGPT Key</legend>
+              You must provide a valid ChatGPT API key obtained from OpenAI.
+            </fieldset>
+          </span>
+        </div>
+        <input type="text" id="gptkey" name="gptkey" placeholder="Your OpenAI Key"> 
+        &nbsp;&nbsp;
+        <div class="tooltip">
+          <label for="arcgiskey">ArcGIS Key:</label>
+          <span class="tooltiptext">
+            <fieldset>
+              <legend>ArcGIS Key</legend>
+              You must provide a valid API key obtained from ArcGIS.
+            </fieldset>
+          </span>
+        </div>
+        <input type="text" id="arcgiskey" name="arcgiskey" placeholder="Your ArcGIS Key"> 
+      </div>
+      <div class="my-div">
+        <label for="target">Type of Results: </label>
+         <label>
+          <input type="radio" name="option" value="Locations" id="option1" checked>
+          <div class="tooltip">
+            Location(s)
+            <span class="tooltiptext"><span>
+              <fieldset>
+                <legend>Location(s)</legend>
+                Display the result as pinpointed locations on the map.
+              </fieldset>
+            </span>
+          </div>
+        </label>
+        <label>
+          <input type="radio" name="option" value="Area" id="option2" >
+            <div class="tooltip">
+              Area
+              <span class="tooltiptext">
+                <fieldset>
+                  <legend>Area</legend>
+                  Display the result as a shaded area on the map.
+                </fieldset>
+              </span>
+             </div>
+        </label>
+      </div>
+      <div class="my-div">
+        <label for="map">Map Type: </label>
+         <label>
+          <input type="radio" name="map" value="Navigation" id="map1" checked>
+            <div class="tooltip">
+              Navigation
+              <span class="tooltiptext">
+                <fieldset>
+                  <legend>Navigation</legend>
+                  Display results on a Navigational map.
+                </fieldset>
+              </span>
+             </div>
+        </label>
+        <label>
+          <input type="radio" name="map" value="Area" id="map2" >
+          <div class="tooltip">
+            Topographic
+            <span class="tooltiptext">
+              <fieldset>
+                <legend>Topographic</legend>
+                Display results on a Topological map.
+              </fieldset>
+            </span>
+           </div>
+        </label>
+      </div>
+      <div class="my-div">
+        <div class="tooltip">
+          <label for="target">Target:</label>
+          <span class="tooltiptext">
+            <fieldset>
+              <legend>Target</legend>
+              Enter a textual description of your geospatial target.
+            </fieldset>
+          </span>
+        </div>
+        <input type="text" id="target" name="target" onkeypress="return entsub(this.form)" size="60"
+            placeholder="Enter a textual description of the target(s) you would like to locate."> 
+        <button type="button" onclick="targetLocation()">SUBMIT</button> 
+        <input type="checkbox" id="suppressresults" onclick="displayResults(false)">
+        <label for="suppressresults">
+          <div class="tooltip">
+            Suppress Raw Results
+            <span class="tooltiptext">
+              <fieldset>
+                <legend>Suppress Raw Results</legend>
+                Selecting this will hide the query which is sent to ChatGPT as well as the raw results returned.
+              </fieldset>
+            </span>
+           </div>
+        </label>
+      </div>
+    </fieldset>
+    </form> 
+    
+  </div>
+
+
+  <div id="myQuestion" class="my-div"></div>
+  <div id="myresult" class="my-div"></div>
+  <div id="myError" class="my-div"></div>
+ 
+  <div id="viewDiv"></div>
+
+</body>
+</html>
+
